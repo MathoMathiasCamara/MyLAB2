@@ -29,7 +29,7 @@ namespace MyLAB2
         {
            if(_TargetCanExecuteMethod!=null)
             {
-                _TargetCanExecuteMethod();
+                return _TargetCanExecuteMethod();
             }
             if (_TargetExecuteMethod != null)
             {

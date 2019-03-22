@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace MyLAB2.Model
 {
@@ -13,10 +15,18 @@ namespace MyLAB2.Model
         private Coordinate _PointB;
         private Coordinate _PointC;
         private String _Description;
-
-        #region Calculate Command
+        private Triangle _SelectedTriangle;
+        private Random rnd;
+        private Triangle RndmTriangle { get; set; }
+        //list triangles
+        public  ObservableCollection<Triangle> Triangles { get; set; }
+        
+        #region  Commands
         //my calculate command
         public MyICommand CalCulateCommand { get; set; }
+        public MyICommand DeleteCommand { get; set; }
+        public MyICommand CheckTrianglesCommand { get; set; }
+        public MyICommand AddCommand { get; set; }
 
         public Triangle()
         {
@@ -24,12 +34,65 @@ namespace MyLAB2.Model
             _PointA = new Coordinate();
             _PointB = new Coordinate();
             _PointC = new Coordinate();
-         
+
+            //commands
+            AddCommand = new MyICommand(AddTriangle, CanAdd);
+            DeleteCommand = new MyICommand(OnDelete, CanDelete);
+            CheckTrianglesCommand = new MyICommand(CheckingTriangles, CanCheckTriangles);
+
+            //list triangles
+            Triangles = new ObservableCollection<Triangle>();
+
+            rnd = new Random();
+            //RndmTriangle = new Triangle();
         }
+
+
+        #region My Command Add
+
+
+        private bool CanAdd()
+        {
+            return true;
+        }
+        private  Triangle CreateRandomTriangle()
+        {
+            RndmTriangle = new Triangle();
+            RndmTriangle.PointA = new Coordinate() { _CoordinateX = rnd.Next(10), _CoordinateY = rnd.Next(10) };
+            RndmTriangle.PointB = new Coordinate() { _CoordinateX = rnd.Next(10), _CoordinateY = rnd.Next(10) };
+            RndmTriangle.PointC = new Coordinate() { _CoordinateX = rnd.Next(10), _CoordinateY = rnd.Next(10) };
+
+            return RndmTriangle;
+        }
+        public void AddTriangle()
+        {
+            try
+            {
+
+                do
+                {
+                    if (CreateRandomTriangle().CheckExist)
+                    {
+                        Triangles.Add(CreateRandomTriangle());
+                        CheckTrianglesCommand.RaiseCanExecuteChanged();
+                    }
+                } while (CreateRandomTriangle().CheckExist == true);
+               
+               
+              
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Error when adding the triangle.");
+            }
+
+        }
+        #endregion
 
         private bool CanCalculate()
         {
-            return CheckExist;
+            return true;
         }
 
         private void OnCalculate()
@@ -47,6 +110,8 @@ namespace MyLAB2.Model
                 //formatting the view
                 _Description = string.Format("{0}\n{1}\n{2}\n{3}\n{4}\n{5}", Length, Angles, Perimeter, Area, IsIsos, exist);
                 RaisePropertyChanged("Description");
+
+                AddCommand.RaiseCanExecuteChanged();
             }
             else
             {
@@ -67,23 +132,34 @@ namespace MyLAB2.Model
             }
             set
             {
-                if (_PointA != null)
+                if (_PointA != value)
                 {
-                    _PointA = value;
-                    _Description = "";
-                    RaisePropertyChanged("PointA");
-                    RaisePropertyChanged("LineAB");
-                    RaisePropertyChanged("LineBC");
-                    RaisePropertyChanged("LineCA");
-                    RaisePropertyChanged("Perimeter");
-                    RaisePropertyChanged("AngleA");
-                    RaisePropertyChanged("AngleB");
-                    RaisePropertyChanged("AngleC");
-                    RaisePropertyChanged("Area");
-                    RaisePropertyChanged("CheckExist");
-                    RaisePropertyChanged("Description");
-                    
-                    
+                    try
+                    {
+                        _PointA = value;
+
+                        Description = "";
+                        RaisePropertyChanged("PointA");
+                        RaisePropertyChanged("LineAB");
+                        RaisePropertyChanged("LineBC");
+                        RaisePropertyChanged("LineCA");
+                        RaisePropertyChanged("Perimeter");
+                        RaisePropertyChanged("AngleA");
+                        RaisePropertyChanged("AngleB");
+                        RaisePropertyChanged("AngleC");
+                        RaisePropertyChanged("Area");
+                        RaisePropertyChanged("CheckExist");
+                        RaisePropertyChanged("Description");
+
+                        CalCulateCommand.RaiseCanExecuteChanged();
+                        AddCommand.RaiseCanExecuteChanged();
+                    }
+                    catch (Exception)
+                    {
+
+                        throw new Exception("Error when assigning values to PointA");
+                    }
+                                    
                 }
             }
         }
@@ -95,23 +171,33 @@ namespace MyLAB2.Model
             }
             set
             {
-                if (_PointB != null)
+                if (_PointB != value)
                 {
-                    _PointB = value;
-                    _Description = "";
-                    RaisePropertyChanged("PointB");
-                    RaisePropertyChanged("LineAB");
-                    RaisePropertyChanged("LineBC");
-                    RaisePropertyChanged("LineCA");
-                    RaisePropertyChanged("Perimeter");
-                    RaisePropertyChanged("AngleA");
-                    RaisePropertyChanged("AngleB");
-                    RaisePropertyChanged("AngleC");
-                    RaisePropertyChanged("Area");
-                    RaisePropertyChanged("CheckExist");
-                    RaisePropertyChanged("Description");
+                    try
+                    {
+                        _PointB = value;
+                        Description = "";
+                        RaisePropertyChanged("PointB");
+                        RaisePropertyChanged("LineAB");
+                        RaisePropertyChanged("LineBC");
+                        RaisePropertyChanged("LineCA");
+                        RaisePropertyChanged("Perimeter");
+                        RaisePropertyChanged("AngleA");
+                        RaisePropertyChanged("AngleB");
+                        RaisePropertyChanged("AngleC");
+                        RaisePropertyChanged("Area");
+                        RaisePropertyChanged("CheckExist");
+                        RaisePropertyChanged("Description");
 
-                    
+                        CalCulateCommand.RaiseCanExecuteChanged();
+                        AddCommand.RaiseCanExecuteChanged();
+                    }
+                    catch (Exception)
+                    {
+
+                        throw new Exception("Error when assigning values to PointB");
+                    }
+                                     
                 }
             }
         }
@@ -123,24 +209,34 @@ namespace MyLAB2.Model
             }
             set
             {
-                if (_PointC != null)
+                if (_PointC != value)
                 {
-                    _PointC = value;
-                    _Description = "";
+                    try
+                    {
+                        _PointC = value;
+                        Description = "";
 
-                    RaisePropertyChanged("PointC");
-                    RaisePropertyChanged("LineAB");
-                    RaisePropertyChanged("LineBC");
-                    RaisePropertyChanged("LineCA");
-                    RaisePropertyChanged("Perimeter");
-                    RaisePropertyChanged("AngleA");
-                    RaisePropertyChanged("AngleB");
-                    RaisePropertyChanged("AngleC");
-                    RaisePropertyChanged("Area");
-                    RaisePropertyChanged("CheckExist");
-                    RaisePropertyChanged("Description");
+                        RaisePropertyChanged("PointC");
+                        RaisePropertyChanged("LineAB");
+                        RaisePropertyChanged("LineBC");
+                        RaisePropertyChanged("LineCA");
+                        RaisePropertyChanged("Perimeter");
+                        RaisePropertyChanged("AngleA");
+                        RaisePropertyChanged("AngleB");
+                        RaisePropertyChanged("AngleC");
+                        RaisePropertyChanged("Area");
+                        RaisePropertyChanged("CheckExist");
+                        RaisePropertyChanged("Description");
 
-                    
+                        CalCulateCommand.RaiseCanExecuteChanged();
+                        AddCommand.RaiseCanExecuteChanged();
+                    }
+                    catch (Exception)
+                    {
+
+                        throw new Exception("Error when assigning values to Point C");
+                    }
+                                  
                 }
             }
         }
@@ -158,7 +254,7 @@ namespace MyLAB2.Model
         }
 
         #region Check does the triangle exist
-        private bool CheckExist
+        public bool CheckExist
         {
             get
             {
@@ -179,7 +275,7 @@ namespace MyLAB2.Model
         {
             get
             {
-                int AB = (int)(Math.Pow(PointB._CoordinateX - PointA._CoordinateX, 2)+ Math.Pow(PointB._CoordinateY- PointA._CoordinateY, 2));
+                var AB = (Math.Pow(PointB._CoordinateX - PointA._CoordinateX, 2)+ Math.Pow(PointB._CoordinateY- PointA._CoordinateY, 2));
                 return Math.Sqrt(AB);
             }
         }
@@ -187,16 +283,16 @@ namespace MyLAB2.Model
         {
             get
             {
-                int AB = (int)(Math.Pow(PointC._CoordinateX - PointB._CoordinateX, 2) + Math.Pow(PointC._CoordinateY - PointB._CoordinateY, 2));
-                return Math.Sqrt(AB);
+                var BC = Math.Pow(PointC._CoordinateX - PointB._CoordinateX, 2) + Math.Pow(PointC._CoordinateY - PointB._CoordinateY, 2);
+                return Math.Sqrt(BC);
             }
         }
         public double LineCA
         {
             get
             {
-                int AB = (int)(Math.Pow(PointA._CoordinateX - PointC._CoordinateX, 2) + Math.Pow(PointA._CoordinateY - PointC._CoordinateY, 2));
-                return Math.Sqrt(AB);
+                var CA = Math.Pow(PointA._CoordinateX - PointC._CoordinateX, 2) + Math.Pow(PointA._CoordinateY - PointC._CoordinateY, 2);
+                return Math.Sqrt(CA);
             }
         }
 
@@ -265,5 +361,77 @@ namespace MyLAB2.Model
             }
        }
         #endregion
+
+        public Triangle SelectedTriangle
+        {
+            get
+            {
+                return _SelectedTriangle;
+            }
+            set
+            {
+                if (_SelectedTriangle != null)
+                {
+                    _SelectedTriangle = value;
+                    DeleteCommand.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        #region My command Delete
+        private bool CanDelete()
+        {
+            return (_SelectedTriangle != null);
+        }
+
+        private void OnDelete()
+        {
+            Triangles.Remove(_SelectedTriangle);
+        }
+        #endregion
+
+
+        #region My Command Check triangles
+        private bool CanCheckTriangles()
+        {
+            if (Triangles != null)
+                return Triangles.Count > 0;
+            else
+                return false;
+        }
+        #endregion
+         
+        #region checcking triangle list
+        public void CheckingTriangles()
+        {
+            if (Triangles != null && Triangles.Count > 1)
+            {
+                int countSameTriangle = 0;
+                foreach (Triangle t in Triangles)
+                {
+                    foreach (Triangle t2 in Triangles)
+                    {
+                        if (t.Perimeter == t2.Perimeter)
+                            countSameTriangle += 1;
+                        
+                    }
+                }
+                string Message = "";
+                if (countSameTriangle > Triangles.Count)
+                    Message = " identical triangles found.";
+                else
+                    Message = "No identical triangles found.";
+                MessageBox.Show(Message, "Identical Triangles", MessageBoxButton.OK);
+            }
+            else
+            {
+                string Message = "Error, There is no/or just 1 Triangle in the list.";
+                MessageBox.Show(Message, "Error in the list.", MessageBoxButton.OK);
+            }
+
+        }
+        #endregion
+
+
     }
 }
