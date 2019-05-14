@@ -9,13 +9,13 @@ namespace MyLAB2.Model
 {
     public class Coordinate
     {
-        public double _CoordinateX { get; set; }
-        public double _CoordinateY { get; set; }
+        public int _CoordinateX { get; set; }
+        public int _CoordinateY { get; set; }
 
         public Coordinate()
         {
-            _CoordinateX = 0.0;
-            _CoordinateY = 0.0;
+            _CoordinateX = 0;
+            _CoordinateY = 0;
         }
     }
 }

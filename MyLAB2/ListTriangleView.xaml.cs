@@ -16,18 +16,13 @@ using System.Windows.Shapes;
 namespace MyLAB2
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for ListTriangleView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ListTriangleView : UserControl
     {
-        public MainWindow()
+        public ListTriangleView()
         {
             InitializeComponent();
-        }
-
-        private void ListTriangleView_Loaded(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

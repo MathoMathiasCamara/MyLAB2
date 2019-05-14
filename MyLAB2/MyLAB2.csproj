@@ -55,7 +55,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ListTriangleView.xaml.cs">
+      <DependentUpon>ListTriangleView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\Coordinate.cs" />
+    <Page Include="ListTriangleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -71,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\IsIsoscele.cs" />
+    <Compile Include="Model\ListTriangle.cs" />
     <Compile Include="Model\Triangle.cs" />
     <Compile Include="MyICommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">

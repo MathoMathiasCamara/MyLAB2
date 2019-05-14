@@ -9,24 +9,18 @@ using System.Windows;
 
 namespace MyLAB2.Model
 {
+
     public class Triangle:INotifyPropertyChanged
     {
         private Coordinate _PointA;
         private Coordinate _PointB;
         private Coordinate _PointC;
+
         private String _Description;
-        private Triangle _SelectedTriangle;
-        private Random rnd;
-        private Triangle RndmTriangle { get; set; }
-        //list triangles
-        public  ObservableCollection<Triangle> Triangles { get; set; }
-        
+
         #region  Commands
         //my calculate command
         public MyICommand CalCulateCommand { get; set; }
-        public MyICommand DeleteCommand { get; set; }
-        public MyICommand CheckTrianglesCommand { get; set; }
-        public MyICommand AddCommand { get; set; }
 
         public Triangle()
         {
@@ -35,60 +29,9 @@ namespace MyLAB2.Model
             _PointB = new Coordinate();
             _PointC = new Coordinate();
 
-            //commands
-            AddCommand = new MyICommand(AddTriangle, CanAdd);
-            DeleteCommand = new MyICommand(OnDelete, CanDelete);
-            CheckTrianglesCommand = new MyICommand(CheckingTriangles, CanCheckTriangles);
-
-            //list triangles
-            Triangles = new ObservableCollection<Triangle>();
-
-            rnd = new Random();
-            //RndmTriangle = new Triangle();
         }
 
 
-        #region My Command Add
-
-
-        private bool CanAdd()
-        {
-            return true;
-        }
-        private  Triangle CreateRandomTriangle()
-        {
-            RndmTriangle = new Triangle();
-            RndmTriangle.PointA = new Coordinate() { _CoordinateX = rnd.Next(10), _CoordinateY = rnd.Next(10) };
-            RndmTriangle.PointB = new Coordinate() { _CoordinateX = rnd.Next(10), _CoordinateY = rnd.Next(10) };
-            RndmTriangle.PointC = new Coordinate() { _CoordinateX = rnd.Next(10), _CoordinateY = rnd.Next(10) };
-
-            return RndmTriangle;
-        }
-        public void AddTriangle()
-        {
-            try
-            {
-
-                do
-                {
-                    if (CreateRandomTriangle().CheckExist)
-                    {
-                        Triangles.Add(CreateRandomTriangle());
-                        CheckTrianglesCommand.RaiseCanExecuteChanged();
-                    }
-                } while (CreateRandomTriangle().CheckExist == true);
-               
-               
-              
-            }
-            catch (Exception)
-            {
-
-                throw new Exception("Error when adding the triangle.");
-            }
-
-        }
-        #endregion
 
         private bool CanCalculate()
         {
@@ -111,7 +54,7 @@ namespace MyLAB2.Model
                 _Description = string.Format("{0}\n{1}\n{2}\n{3}\n{4}\n{5}", Length, Angles, Perimeter, Area, IsIsos, exist);
                 RaisePropertyChanged("Description");
 
-                AddCommand.RaiseCanExecuteChanged();
+                //AddCommand.RaiseCanExecuteChanged();
             }
             else
             {
@@ -152,7 +95,6 @@ namespace MyLAB2.Model
                         RaisePropertyChanged("Description");
 
                         CalCulateCommand.RaiseCanExecuteChanged();
-                        AddCommand.RaiseCanExecuteChanged();
                     }
                     catch (Exception)
                     {
@@ -190,7 +132,6 @@ namespace MyLAB2.Model
                         RaisePropertyChanged("Description");
 
                         CalCulateCommand.RaiseCanExecuteChanged();
-                        AddCommand.RaiseCanExecuteChanged();
                     }
                     catch (Exception)
                     {
@@ -229,7 +170,6 @@ namespace MyLAB2.Model
                         RaisePropertyChanged("Description");
 
                         CalCulateCommand.RaiseCanExecuteChanged();
-                        AddCommand.RaiseCanExecuteChanged();
                     }
                     catch (Exception)
                     {
@@ -361,77 +301,5 @@ namespace MyLAB2.Model
             }
        }
         #endregion
-
-        public Triangle SelectedTriangle
-        {
-            get
-            {
-                return _SelectedTriangle;
-            }
-            set
-            {
-                if (_SelectedTriangle != null)
-                {
-                    _SelectedTriangle = value;
-                    DeleteCommand.RaiseCanExecuteChanged();
-                }
-            }
-        }
-
-        #region My command Delete
-        private bool CanDelete()
-        {
-            return (_SelectedTriangle != null);
-        }
-
-        private void OnDelete()
-        {
-            Triangles.Remove(_SelectedTriangle);
-        }
-        #endregion
-
-
-        #region My Command Check triangles
-        private bool CanCheckTriangles()
-        {
-            if (Triangles != null)
-                return Triangles.Count > 0;
-            else
-                return false;
-        }
-        #endregion
-         
-        #region checcking triangle list
-        public void CheckingTriangles()
-        {
-            if (Triangles != null && Triangles.Count > 1)
-            {
-                int countSameTriangle = 0;
-                foreach (Triangle t in Triangles)
-                {
-                    foreach (Triangle t2 in Triangles)
-                    {
-                        if (t.Perimeter == t2.Perimeter)
-                            countSameTriangle += 1;
-                        
-                    }
-                }
-                string Message = "";
-                if (countSameTriangle > Triangles.Count)
-                    Message = " identical triangles found.";
-                else
-                    Message = "No identical triangles found.";
-                MessageBox.Show(Message, "Identical Triangles", MessageBoxButton.OK);
-            }
-            else
-            {
-                string Message = "Error, There is no/or just 1 Triangle in the list.";
-                MessageBox.Show(Message, "Error in the list.", MessageBoxButton.OK);
-            }
-
-        }
-        #endregion
-
-
     }
 }
